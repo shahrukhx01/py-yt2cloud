@@ -6,6 +6,7 @@ from pydrive.drive import GoogleDrive
 import sys
 from flask import Flask
 from flask import request
+import eyed3
 
 app = Flask(__name__)
 
@@ -102,7 +103,7 @@ def yt2cloud():
 add metadata to mp3 files.
 """
 def update_metadata(dest_file,artist,title):
-    tag = eyeD3.Tag()
+    tag = eyed3.Tag()
     tag.link(dest_file)
     tag.setVersion(eyeD3.ID3_V2)
     tag.setTextEncoding(eyeD3.UTF_8_ENCODING)
