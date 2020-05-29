@@ -95,7 +95,7 @@ def yt2cloud():
     artist = content['artist']
     dest_file = process_video(id,url)
     update_metadata(dest_file,artist,title)
-    #save_to_gDrive(dest_file)
+    save_to_gDrive(dest_file)
     return "Video saved to your Google drive!"
 
 
