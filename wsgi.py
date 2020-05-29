@@ -3,7 +3,7 @@ import moviepy.editor as mp
 import os
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-
+import sys
 from flask import Flask
 from flask import request
 
@@ -59,6 +59,7 @@ def auth():
     gauth.SaveCredentialsFile("mycreds.txt")
 
     drive = GoogleDrive(gauth)
+    return "credentials loaded."
 #gauth.LoadClientConfigFile("client_secret_447233534603-845n7mk8mnc4ht5lv9cbnag9gs7djng8.apps.googleusercontent.com.json")
 
 def save_to_gDrive(dest_file):
