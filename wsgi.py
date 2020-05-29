@@ -103,7 +103,6 @@ def yt2cloud():
 add metadata to mp3 files.
 """
 def update_metadata(dest_file,artist,title):
-    tag = eyed3.Tag()
     audiofile = eyed3.load(dest_file)
     audiofile.tag.title= title
     audiofile.tag.artist= artist
