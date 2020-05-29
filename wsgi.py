@@ -68,7 +68,7 @@ def auth():
 def authorize_drive():
     print('connecting to Google drive...')
     gauth = GoogleAuth()
-    gauth.DEFAULT_SETTINGS['client_config_file'] = "client_secret.json"
+    gauth.DEFAULT_SETTINGS['client_config_file'] = "client_secrets.json"
     gauth.LoadCredentialsFile("mycreds.txt")
     return GoogleDrive(gauth)
     print('connected to GDrive!')
