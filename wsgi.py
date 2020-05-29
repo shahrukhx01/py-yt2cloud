@@ -49,6 +49,9 @@ def auth():
     if gauth.credentials is None:
         # Authenticate if they're not there
         gauth.LocalWebserverAuth()
+    elif gauth.access_token_expired:
+        # Refresh them if expired
+        gauth.Refresh()
     else:
         # Initialize the saved creds
         gauth.Authorize()
