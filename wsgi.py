@@ -42,7 +42,7 @@ saves audio track to Google drive
 gauth = None
 drive= None
 @app.route('/auth', methods=['GET'])
-def index():
+def auth():
 
     gauth = GoogleAuth()
     gauth.LoadCredentialsFile("mycreds.txt")
@@ -75,7 +75,7 @@ def save_to_gDrive(dest_file):
 Main route
 """
 @app.route('/yt2cloud', methods=['GET', 'POST'])
-def index():
+def yt2cloud():
     content = request.get_json(silent=True)
     id = content['url'].split('v=')[1]
     dest_file = process_video(id)
