@@ -3,7 +3,6 @@ import sys
 import os
 import subprocess
 
-api = Api(api_key='AIzaSyCYW1ZhdWqZxprlm12WOJIlbCOfmApgc3A')
 prefix = 'seek_'
 if __name__ == '__main__':
     if len(sys.argv) > 1:
