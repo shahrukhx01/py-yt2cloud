@@ -9,11 +9,10 @@ if __name__ == '__main__':
         ydl_opts = {
         'outtmpl': "{}%(uploader)s-%(title)s-%(id)s.%(ext)s".format(prefix),
         'getfilename': True,
-        'audioquality':0
+        'audioquality':1
         }
         ydl = YoutubeDL(ydl_opts)
         ydl.download(sys.argv[1:])
-
 
 
     else:
