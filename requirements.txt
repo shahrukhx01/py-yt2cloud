@@ -3,3 +3,4 @@ pydrive
 flask
 youtube_dl
 gunicorn
+eyed3

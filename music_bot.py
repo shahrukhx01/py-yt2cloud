@@ -7,10 +7,9 @@ prefix = 'seek_'
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         ydl_opts = {
-        'audioformat': "mp3",
-        'extractaudio': True,
         'outtmpl': "{}%(uploader)s-%(title)s-%(id)s.%(ext)s".format(prefix),
-        'getfilename': True
+        'getfilename': True,
+        'audioquality':0
         }
         ydl = YoutubeDL(ydl_opts)
         ydl.download(sys.argv[1:])
