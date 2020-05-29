@@ -62,9 +62,15 @@ def auth():
     return "credentials loaded."
 #gauth.LoadClientConfigFile("client_secret_447233534603-845n7mk8mnc4ht5lv9cbnag9gs7djng8.apps.googleusercontent.com.json")
 
-def save_to_gDrive(dest_file):
-    #drive = GoogleDrive(gauth)
+def authorize_drive():
+    gauth = GoogleAuth()
+    gauth.DEFAULT_SETTINGS['client_config_file'] = "client_secret.json"
+    gauth.LoadCredentialsFile("mycreds.txt")
+    return GoogleDrive(gauth)
 
+
+def save_to_gDrive(dest_file):
+    drive = authorize_drive()
     track = drive.CreateFile({'parents': [{'id': '1L-CZ9qzt28CszD9S5i2Pws4SXXJRQaE7'}]})
     track.SetContentFile(dest_file)
     track.Upload()
