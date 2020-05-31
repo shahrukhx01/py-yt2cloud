@@ -85,12 +85,15 @@ def clean_up(file_name):
     print("{} Removed!".format(file_name))
 
 def update_metadata(title):
-    audiofile = eyed3.load('{}.mp3'.format(title))
-    artist = title.split(' - ')[1]
-    audiofile.tag.title= audiofile.tag._getTitle().split(' (')[0]
-    audiofile.tag._setArtist(artist)
-    audiofile.tag.album= audiofile.tag._getAlbum().split(' (')[0]
-    audiofile.tag.save()
+    try:
+        audiofile = eyed3.load('{}.mp3'.format(title))
+        artist = title.split(' - ')[1]
+        audiofile.tag.title= audiofile.tag._getTitle().split(' (')[0]
+        audiofile.tag._setArtist(artist)
+        audiofile.tag.album= audiofile.tag._getAlbum().split(' (')[0]
+        audiofile.tag.save()
+    except:
+        pass
 
 @app.route('/yt2cloud', methods=['POST'])
 def yt2cloud():
