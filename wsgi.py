@@ -16,7 +16,7 @@ app = Flask(__name__)
 # to search
 def init():
     query = "{} {} mp3"
-    sources = ["djpunjab","mr-jatt","djyoungster","djjohal"]
+    sources = ["pendujatt","djpunjab","mr-jatt","djyoungster","djjohal"]
     return (sources,query)
 
 def google_search(query,sources,text):
@@ -139,7 +139,7 @@ def generate_dllink(text,url):
     dllink= None
     for a in soup.find_all('a', href= True): #text=re.compile('320 Kbps', re.IGNORECASE)
         try:
-            if '/320/' in a['href'] and '.mp3' in a['href']: #re.search("*.\/320\/.*", a['href']):
+            if (('/320/' in a['href']) or '/320k-dtlch/' in a['href']) and '.mp3' in a['href']: #re.search("*.\/320\/.*", a['href']):
                 print(a['href'])
                 if a['href'][:4] !='http':
                     dllink= base+a['href']
