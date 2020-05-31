@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Shahrukh's Music Garage!</h2>
+    <form id='song_upload' action="/yt2cloud">
+      <div class="form-group">
+          <label for="email">Song info:</label>
+        <textarea  class="form-control" id="text" placeholder="Enter song name" name="text"></textarea>
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+      <h3 id='response'></h3>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+  $("#song_upload").submit(function(e) {
+
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+
+      var form = $(this);
+      var text= document.getElementById('text').value
+      var url = form.attr('action');
+
+      var data = {text:text}
+      console.log(JSON.stringify(data))
+      $.ajax({
+             type: "POST",
+             url: url,
+             contentType: 'application/json;charset=UTF-8',
+             data: JSON.stringify(data), // serializes the form's elements.
+             success: function(data)
+             {
+                $('#response').html(JSON.stringify(data))
+             }
+           });
+
+
+  });
+</script>

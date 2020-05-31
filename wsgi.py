@@ -1,43 +1,37 @@
-import subprocess
-import moviepy.editor as mp
-import os
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-import sys
-from flask import Flask
+from googlesearch import search
+import shutil
+import re
+from bs4 import BeautifulSoup
+import requests
+from flask import Flask, render_template
 from flask import request
 import eyed3
+import tldextract
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+import os
 
 app = Flask(__name__)
 
-prefix = 'seek_'
-dest_ext = '.mp3'
-src_ext = '.mp4'
+# to search
+def init():
+    query = "{} {} mp3"
+    sources = ["djpunjab","mr-jatt","djyoungster","djjohal"]
+    return (sources,query)
 
-"""
-fetches video track from Youtube
-"""
+def google_search(query,sources,text):
+    results=[]
+    for i,v in enumerate(sources):
+        q = query.format(text,v)
 
-def get_video(id,url):
-    try:
-        print('fetching video from youtube...')
-        stdout = subprocess.check_output("python3 music_bot.py {}".format(id), shell = True)
-        logs = stdout.decode("utf-8").split('\n')
-        print(logs)
-        file_name= None
-        for index,val in enumerate(logs):
-            if id in val and prefix in val:
-               file_name = val.split(prefix)[1].split('.mp4')[0]
-        return file_name
-    except:
-        print ("Unexpected error:", sys.exc_info()[0])
-        raise
-"""
-removes files from disk
-"""
-def clean_up(file_name):
-    os.remove(file_name)
-    print("{} Removed!".format(file_name))
+        for j in search(q, tld="com", num=2, stop=2, pause=2):
+            results.append(j)
+    return results
+
+
+def download_mp3(url,text):
+    from os import system
+    system('wget "{}" -O {}.mp3'.format(url,text))
 
 """
 saves audio track to Google drive
@@ -63,7 +57,7 @@ def auth():
 
     drive = GoogleDrive(gauth)
     return "credentials loaded."
-#gauth.LoadClientConfigFile("client_secret_447233534603-845n7mk8mnc4ht5lv9cbnag9gs7djng8.apps.googleusercontent.com.json")
+
 
 def authorize_drive():
     print('connecting to Google drive...')
@@ -84,49 +78,76 @@ def save_to_gDrive(dest_file):
     clean_up(dest_file)
 
 """
-Main route
+removes files from disk
 """
-@app.route('/yt2cloud', methods=['GET', 'POST'])
-def yt2cloud():
-    content = request.get_json(silent=True)
-    url= content['url']
-    id = content['url'].split('v=')[1]
-    title = content['title']
-    artist = content['artist']
-    dest_file = process_video(id,url)
-    update_metadata(dest_file,artist,title)
-    save_to_gDrive(dest_file)
-    return "Video saved to your Google drive!"
+def clean_up(file_name):
+    os.remove(file_name)
+    print("{} Removed!".format(file_name))
 
-
-"""
-add metadata to mp3 files.
-"""
-def update_metadata(dest_file,artist,title):
-    audiofile = eyed3.load(dest_file)
-    audiofile.tag.title= title
-    audiofile.tag.artist= artist
+def update_metadata(title):
+    audiofile = eyed3.load('{}.mp3'.format(title))
+    artist = title.split(' - ')[1]
+    audiofile.tag.title= audiofile.tag._getTitle().split(' (')[0]
+    audiofile.tag._setArtist(artist)
+    audiofile.tag.album= audiofile.tag._getAlbum().split(' (')[0]
     audiofile.tag.save()
 
+@app.route('/yt2cloud', methods=['POST'])
+def yt2cloud():
+    content = request.get_json(silent=True)
+    print(content)
+    text= content['text']
+    dllink= None
+    print('Initializing...')
+    sources,query= init()
+    print('searching on google...')
+    links= google_search(query,sources,text)
+    print('generating download link...')
+    dllink= parse_lnks(links,text)
+    print('downloading song...')
+    download_mp3(dllink,re.escape(text))
+    print('updating metadata...')
+    update_metadata(text)
+    print('initializing gdrive...')
+    save_to_gDrive('{}.mp3'.format(text))
+    return 'your song ({}) has been uploaded to Google drive!'.format(dllink)
 
-"""
-converts video files to audio.
-"""
-def process_video(id,url):
-    print('starting over...')
-    file_name= get_video(id,url)
-    src_file = "{}{}{}".format(prefix,file_name,src_ext)
-    dest_file= "{}{}".format(file_name,dest_ext)
-    print('converting video to audio track...')
-    clip = mp.VideoFileClip(src_file)
-    clean_up(src_file)
-    clip.audio.write_audiofile(dest_file)
-    print('audio file written to disk!')
-    return dest_file
+@app.route('/')
+def webprint():
+    return render_template('index.html')
 
-"""
-Main method
-"""
+def parse_lnks(links,text):
+    dllink= None
+    for i,v in enumerate(links):
+        dllink= generate_dllink(text,v)
+        if dllink!= None:
+            break
+    return dllink
+
+
+def generate_dllink(text,url):
+    protocol = url.split(':')[0]
+    url_parsed= tldextract.extract(url)
+    base= "{}://{}.{}/".format(protocol,url_parsed.domain,url_parsed.suffix)
+    html_content = requests.get(url).text
+
+    # Parse the html content
+    soup = BeautifulSoup(html_content, "lxml")
+    dllink= None
+    for a in soup.find_all('a', href= True): #text=re.compile('320 Kbps', re.IGNORECASE)
+        try:
+            if '/320/' in a['href'] and '.mp3' in a['href']: #re.search("*.\/320\/.*", a['href']):
+                print(a['href'])
+                if a['href'][:4] !='http':
+                    dllink= base+a['href']
+                else:
+                    dllink= a['href']
+        except:
+            continue
+    print(url,dllink)
+    return dllink
+
+
 
 if __name__ == '__main__':
     app.run()

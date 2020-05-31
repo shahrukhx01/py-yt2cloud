@@ -4,3 +4,11 @@ flask
 youtube_dl
 gunicorn
 eyed3
+beautifulsoup4
+google
+cdifflib
+requests
+beautifulsoup4
+lxml
+tldextract
+cs.id3
