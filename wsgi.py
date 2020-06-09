@@ -101,19 +101,30 @@ def yt2cloud():
     print(content)
     text= content['text']
     dllink= None
-    print('Initializing...')
-    sources,query= init()
-    print('searching on google...')
-    links= google_search(query,sources,text)
-    print('generating download link...')
-    dllink= parse_lnks(links,text)
-    print('downloading song...')
-    download_mp3(dllink,re.escape(text))
-    print('updating metadata...')
-    update_metadata(text)
-    print('initializing gdrive...')
-    save_to_gDrive('{}.mp3'.format(text))
-    return 'your song ({}) has been uploaded to Google drive!'.format(dllink)
+    if len(text.split(' - '))==3:
+        dllink = text.split(' - ')[2]
+        text = text.split(' - ')[0] +' - '+ text.split(' - ')[1]
+        print('downloading song...')
+        download_mp3(dllink,re.escape(text))
+        print('updating metadata...')
+        update_metadata(text)
+        print('initializing gdrive...')
+        save_to_gDrive('{}.mp3'.format(text))
+        return 'your song ({}) has been uploaded to Google drive!'.format(dllink)
+    else:
+        print('Initializing...')
+        sources,query= init()
+        print('searching on google...')
+        links= google_search(query,sources,text)
+        print('generating download link...')
+        dllink= parse_lnks(links,text)
+        print('downloading song...')
+        download_mp3(dllink,re.escape(text))
+        print('updating metadata...')
+        update_metadata(text)
+        print('initializing gdrive...')
+        save_to_gDrive('{}.mp3'.format(text))
+        return 'your song ({}) has been uploaded to Google drive!'.format(dllink)
 
 @app.route('/')
 def webprint():
