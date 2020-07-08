@@ -88,7 +88,7 @@ def update_metadata(title):
     try:
         audiofile = eyed3.load('{}.mp3'.format(title))
         artist = title.split(' - ')[0]
-        audiofile.tag.title= audiofile.tag._getTitle().split(' (')[1]
+        audiofile.tag.title= audiofile.tag._getTitle().split(' (')[0]
         audiofile.tag._setArtist(artist)
         audiofile.tag.album= audiofile.tag._getAlbum().split(' (')[0]
         audiofile.tag.save()
