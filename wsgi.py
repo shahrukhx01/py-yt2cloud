@@ -71,7 +71,7 @@ def authorize_drive():
 def save_to_gDrive(dest_file):
     print('uploading file to drive...')
     drive = authorize_drive()
-    track = drive.CreateFile({'parents': [{'id': '1L-CZ9qzt28CszD9S5i2Pws4SXXJRQaE7'}]})
+    track = drive.CreateFile({'parents': [{'id': '1395aYEovYiso0GzJ8giHCG-qS90deWyI'}]})
     track.SetContentFile(dest_file)
     track.Upload()
     print('file has been uploaded to drive!')
