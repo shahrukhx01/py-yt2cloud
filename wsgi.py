@@ -53,7 +53,7 @@ def auth():
         # Initialize the saved creds
         gauth.Authorize()
     # Save the current credentials to a file
-    gauth.SaveCredentialsFile("mycreds.txt")
+    gauth.SaveCredentialsFile("mycreds.py")
 
     drive = GoogleDrive(gauth)
     return "credentials loaded."
